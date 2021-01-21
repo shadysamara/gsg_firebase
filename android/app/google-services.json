@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "834941893879",
+    "project_id": "gsg-firebase",
+    "storage_bucket": "gsg-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834941893879:android:e9ba070702f6bd6860e7f2",
+        "android_client_info": {
+          "package_name": "com.example.gsg_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834941893879-0vbpnspgl9pe62dgrgk6c4lbf78sdn6j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClZqQXtxExH_H9RZ2Up7L5ZH0hpLu35Ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834941893879-0vbpnspgl9pe62dgrgk6c4lbf78sdn6j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
