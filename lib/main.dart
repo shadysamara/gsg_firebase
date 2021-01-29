@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:gsg_firebase/server.dart';
+import 'package:gsg_firebase/backend/server.dart';
+import 'package:gsg_firebase/ui/widgets/customTextField.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,55 +55,103 @@ class App extends StatelessWidget {
 class HomePage extends StatelessWidget {
   String email;
   String password;
+  String name;
+  String city;
+  String phoneNumber;
+
+  saveEmail(String email) {
+    this.email = email;
+  }
+
+  saveName(String name) {
+    this.name = name;
+  }
+
+  savePassword(String password) {
+    this.password = password;
+  }
+
+  saveCity(String city) {
+    this.city = city;
+  }
+
+  savephone(String phone) {
+    this.phoneNumber = phone;
+  }
+
+  nullValidation(String value) {
+    if (value == '') {
+      return 'required field';
+    }
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey();
+  saveForm() {
+    if (formKey.currentState.validate()) {
+      formKey.currentState.save();
+      loginToMyAPP(this.email, this.password);
+
+      // saveUser({
+      //   'email': this.email,
+      //   'password': this.password,
+      //   'name': this.name,
+      //   'city': this.city,
+      //   'phone': this.phoneNumber
+      // });
+    } else {
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextField(
-          onChanged: (value) {
-            this.email = value;
-          },
+        body: Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomTextField(
+              labelText: 'Email',
+              saveFun: saveEmail,
+              validationFun: nullValidation,
+            ),
+            CustomTextField(
+              labelText: 'Password',
+              saveFun: savePassword,
+              validationFun: nullValidation,
+            ),
+            // CustomTextField(
+            //   labelText: 'Name',
+            //   saveFun: saveName,
+            //   validationFun: nullValidation,
+            // ),
+            // CustomTextField(
+            //   labelText: 'City',
+            //   saveFun: saveCity,
+            //   validationFun: nullValidation,
+            // ),
+            // CustomTextField(
+            //   labelText: 'Phone',
+            //   saveFun: savephone,
+            //   validationFun: nullValidation,
+            // ),
+            Container(
+              width: double.infinity,
+              child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Text('REGISTER'),
+                  onPressed: () async {
+                    saveForm();
+                  }),
+            ),
+          ],
         ),
-        TextField(
-          onChanged: (value) {
-            this.password = value;
-          },
-        ),
-        RaisedButton(
-            child: Text('REGISTER'),
-            onPressed: () async {
-              String id = await registerUsingEmailAndPassword(email, password);
-              if (id != null) {
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (context) {
-                    return MainPage();
-                  },
-                ));
-              } else {}
-            }),
-        RaisedButton(
-            child: Text('LOGIN'),
-            onPressed: () async {
-              String id = await loginUsingEmailAndPassword(email, password);
-              if (id != null) {
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (context) {
-                    return MainPage();
-                  },
-                ));
-              } else {
-                print('error');
-              }
-            }),
-        RaisedButton(
-            child: Text('SIGNOUT'),
-            onPressed: () async {
-              signOut();
-            })
-      ],
+      ),
     ));
   }
 }
