@@ -1,10 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:gsg_firebase/backend/repository.dart';
+import 'package:gsg_firebase/main.dart';
 import 'package:gsg_firebase/models/User.dart' as myUser;
+import 'package:gsg_firebase/ui/pages/loginpage.dart';
+import 'package:gsg_firebase/ui/pages/mershant_page.dart';
+import 'package:gsg_firebase/ui/pages/products_page.dart';
 import 'package:logger/logger.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseFirestore firestore = FirebaseFirestore.instance;
+Logger logger = Logger();
 final String collectionName = 'users';
 Future<String> registerUsingEmailAndPassword(
     String email, String password) async {
@@ -31,8 +38,9 @@ Future<String> loginUsingEmailAndPassword(String email, String password) async {
   }
 }
 
-signOut() {
-  auth.signOut();
+signOut() async {
+  await auth.signOut();
+  Get.to(LoginPage());
 }
 
 String getUserId() {
@@ -93,5 +101,14 @@ loginToMyAPP(String email, String password) async {
   String userId = await loginUsingEmailAndPassword(email, password);
   DocumentSnapshot documentSnapshot =
       await firestore.collection('Users').doc(userId).get();
-  Logger().e(documentSnapshot.data());
+  Map userMap = documentSnapshot.data();
+  myUser.User user = myUser.User.fromMap(userMap);
+
+  Repository.repository.typeOfUser = user.type;
+  Repository.repository.userMap = userMap;
+  if (user.type == myUser.userType.mershant) {
+    Get.off(MershantPage());
+  } else {
+    Get.off(ProductsPage());
+  }
 }

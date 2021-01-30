@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:gsg_firebase/backend/server.dart';
+import 'package:gsg_firebase/ui/pages/loginpage.dart';
 import 'package:gsg_firebase/ui/widgets/customTextField.dart';
 
 void main() {
@@ -11,8 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return MaterialApp(
-      home: App(),
+    return GetMaterialApp(
+      home: MaterialApp(
+        home: App(),
+      ),
     );
   }
 }
@@ -38,7 +42,7 @@ class App extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          return SplachScreen();
+          return LoginPage();
         }
 
         // Otherwise, show something whilst waiting for initialization to complete
@@ -89,70 +93,88 @@ class HomePage extends StatelessWidget {
   saveForm() {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      loginToMyAPP(this.email, this.password);
 
-      // saveUser({
-      //   'email': this.email,
-      //   'password': this.password,
-      //   'name': this.name,
-      //   'city': this.city,
-      //   'phone': this.phoneNumber
-      // });
+      saveUser({
+        'email': this.email,
+        'password': this.password,
+        'name': this.name,
+        'city': this.city,
+        'phone': this.phoneNumber,
+        'role': this.roleName
+      });
     } else {
       return;
     }
+  }
+
+  String roleName;
+  setRoleName(String value) {
+    this.roleName = value;
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        body: Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Form(
-        key: formKey,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(
-              labelText: 'Email',
-              saveFun: saveEmail,
-              validationFun: nullValidation,
-            ),
-            CustomTextField(
-              labelText: 'Password',
-              saveFun: savePassword,
-              validationFun: nullValidation,
-            ),
-            // CustomTextField(
-            //   labelText: 'Name',
-            //   saveFun: saveName,
-            //   validationFun: nullValidation,
-            // ),
-            // CustomTextField(
-            //   labelText: 'City',
-            //   saveFun: saveCity,
-            //   validationFun: nullValidation,
-            // ),
-            // CustomTextField(
-            //   labelText: 'Phone',
-            //   saveFun: savephone,
-            //   validationFun: nullValidation,
-            // ),
-            Container(
-              width: double.infinity,
-              child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Text('REGISTER'),
-                  onPressed: () async {
-                    saveForm();
-                  }),
-            ),
+        appBar: AppBar(
+          title: Text('Home'),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () {
+                  signOut();
+                })
           ],
         ),
-      ),
-    ));
+        body: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  UserType(setRoleName),
+                  CustomTextField(
+                    labelText: 'Email',
+                    saveFun: saveEmail,
+                    validationFun: nullValidation,
+                  ),
+                  CustomTextField(
+                    labelText: 'Password',
+                    saveFun: savePassword,
+                    validationFun: nullValidation,
+                  ),
+                  CustomTextField(
+                    labelText: 'Name',
+                    saveFun: saveName,
+                    validationFun: nullValidation,
+                  ),
+                  CustomTextField(
+                    labelText: 'City',
+                    saveFun: saveCity,
+                    validationFun: nullValidation,
+                  ),
+                  CustomTextField(
+                    labelText: 'Phone',
+                    saveFun: savephone,
+                    validationFun: nullValidation,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text('REGISTER'),
+                        onPressed: () async {
+                          saveForm();
+                        }),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }
 
@@ -161,6 +183,16 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      appBar: AppBar(
+        title: Text('main'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () {
+                signOut();
+              })
+        ],
+      ),
       body: Center(
         child: Text('you are authorized user'),
       ),
@@ -191,6 +223,50 @@ class SplachScreen extends StatelessWidget {
       body: Center(
         child: FlutterLogo(),
       ),
+    );
+  }
+}
+
+class UserType extends StatefulWidget {
+  Function fun;
+  UserType(this.fun);
+  @override
+  _UserTypeState createState() => _UserTypeState();
+}
+
+class _UserTypeState extends State<UserType> {
+  String groupValue;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Row(
+      children: [
+        Expanded(
+            child: RadioListTile(
+          title: Text('Mershant'),
+          value: 'mershant',
+          groupValue: groupValue,
+          onChanged: (value) {
+            this.groupValue = value;
+            setState(() {
+              widget.fun(value);
+            });
+          },
+        )),
+        Expanded(
+            child: RadioListTile(
+          title: Text('Customer'),
+          value: 'customer',
+          groupValue: groupValue,
+          onChanged: (value) {
+            this.groupValue = value;
+            setState(() {
+              widget.fun(value);
+            });
+          },
+        ))
+      ],
     );
   }
 }
