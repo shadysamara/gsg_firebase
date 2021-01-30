@@ -10,8 +10,8 @@ class CustomDrawer extends StatelessWidget {
       child: Column(
         children: [
           UserAccountsDrawerHeader(
-              accountName: Text(Repository.repository.userMap['name']),
-              accountEmail: Text(Repository.repository.userMap['email'])),
+              accountName: Text(Repository.repository.user.name),
+              accountEmail: Text(Repository.repository.user.email)),
           Repository.repository.typeOfUser == userType.admin
               ? Column(
                   children: [

@@ -4,6 +4,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:gsg_firebase/backend/server.dart';
 import 'package:gsg_firebase/ui/pages/loginpage.dart';
 import 'package:gsg_firebase/ui/widgets/customTextField.dart';
+import 'package:gsg_firebase/utilities/styles.dart';
 
 void main() {
   runApp(MyApp());
@@ -16,6 +17,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       home: MaterialApp(
         home: App(),
+        theme: ThemeData(
+            textTheme: TextTheme(
+          body1: profileStyle.copyWith(fontWeight: FontWeight.w700),
+        )),
       ),
     );
   }

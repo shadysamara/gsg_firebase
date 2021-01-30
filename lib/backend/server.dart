@@ -94,6 +94,7 @@ saveUser(Map map) async {
   String userId =
       await registerUsingEmailAndPassword(map['email'], map['password']);
   map.remove('password');
+  map['userId'] = userId;
   firestore.collection('Users').doc(userId).set({...map});
 }
 
@@ -105,10 +106,14 @@ loginToMyAPP(String email, String password) async {
   myUser.User user = myUser.User.fromMap(userMap);
 
   Repository.repository.typeOfUser = user.type;
-  Repository.repository.userMap = userMap;
-  if (user.type == myUser.userType.mershant) {
-    Get.off(MershantPage());
-  } else {
-    Get.off(ProductsPage());
-  }
+  Repository.repository.user = user;
+
+  Get.off(ProductsPage());
+}
+
+updateUserInFirestore(Map map) {
+  firestore
+      .collection('Users')
+      .doc(auth.currentUser.uid)
+      .set({...map}, SetOptions(merge: true));
 }

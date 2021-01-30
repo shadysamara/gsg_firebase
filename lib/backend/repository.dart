@@ -4,5 +4,5 @@ class Repository {
   Repository._();
   static Repository repository = Repository._();
   userType typeOfUser;
-  Map userMap;
+  User user;
 }
