@@ -8,6 +8,7 @@ class User {
   String city;
   String email;
   userType type;
+  String imageUrl;
 
   User({this.name, this.city, this.email, this.phone, this.type});
   User.fromMap(Map map) {
@@ -16,6 +17,7 @@ class User {
     this.city = map['city'];
     this.phone = map['phone'];
     this.email = map['email'];
+    this.imageUrl = map['imageUrl'];
     this.type = map['role'] == 'admin'
         ? userType.admin
         : map['role'] == 'merchant'
@@ -28,6 +30,7 @@ class User {
       'city': this.city,
       'phone': this.phone,
       'email': this.email,
+      'imageUrl': this.imageUrl,
       'userType': this.type.toString()
     };
   }

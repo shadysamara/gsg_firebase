@@ -205,7 +205,26 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class SplachScreen extends StatelessWidget {
+class SplachScreen extends StatefulWidget {
+  @override
+  _SplachScreenState createState() => _SplachScreenState();
+}
+
+class _SplachScreenState extends State<SplachScreen> {
+  fetchData() {
+    String userId = getUserId();
+    if (userId != null) {
+      fetchUserData(userId);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration(seconds: 3)).then((value) {

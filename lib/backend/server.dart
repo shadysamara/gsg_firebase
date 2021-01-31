@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:gsg_firebase/backend/repository.dart';
 import 'package:gsg_firebase/main.dart';
@@ -11,6 +14,7 @@ import 'package:logger/logger.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseFirestore firestore = FirebaseFirestore.instance;
+FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 Logger logger = Logger();
 final String collectionName = 'users';
 Future<String> registerUsingEmailAndPassword(
@@ -45,7 +49,6 @@ signOut() async {
 
 String getUserId() {
   String id = auth.currentUser != null ? auth.currentUser.uid : null;
-  print(id);
   return id;
 }
 
@@ -95,11 +98,21 @@ saveUser(Map map) async {
       await registerUsingEmailAndPassword(map['email'], map['password']);
   map.remove('password');
   map['userId'] = userId;
-  firestore.collection('Users').doc(userId).set({...map});
+  await firestore.collection('Users').doc(userId).set({...map});
+  myUser.User user = myUser.User.fromMap(map);
+
+  Repository.repository.typeOfUser = user.type;
+  Repository.repository.user = user;
+
+  Get.off(ProductsPage());
 }
 
 loginToMyAPP(String email, String password) async {
   String userId = await loginUsingEmailAndPassword(email, password);
+  await fetchUserData(userId);
+}
+
+fetchUserData(String userId) async {
   DocumentSnapshot documentSnapshot =
       await firestore.collection('Users').doc(userId).get();
   Map userMap = documentSnapshot.data();
@@ -111,9 +124,32 @@ loginToMyAPP(String email, String password) async {
   Get.off(ProductsPage());
 }
 
-updateUserInFirestore(Map map) {
-  firestore
-      .collection('Users')
-      .doc(auth.currentUser.uid)
-      .set({...map}, SetOptions(merge: true));
+updateUserInFirestore(Map map) async {
+  File file = map['file'];
+  String imageUrl = await uploadImage(file);
+  map.remove('file');
+  map['imageUrl'] = imageUrl;
+  firestore.collection('Users').doc(auth.currentUser.uid).update({...map});
 }
+
+Future<String> uploadImage(File file) async {
+  String filePath = file.path;
+
+  String fileName = filePath.split('/').last;
+  Reference reference = firebaseStorage.ref('images/$fileName');
+  TaskSnapshot taskSnapshot = await reference.putFile(file);
+  String url = await reference.getDownloadURL();
+  logger.e(url);
+  return url;
+}
+/*
+1- make refrence for the image
+Reference reference = firebaseStorage.ref('images/$fileName');
+
+2- upload the image to firebase storage
+TaskSnapshot taskSnapshot = await reference.putFile(file);
+
+3- get the uploaded image url
+String url = await reference.getDownloadURL();
+
+*/
